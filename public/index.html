@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Echo Tale — A Poetic Collaboration</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌸</text></svg>">
+</head>
+<body>
+  <div class="container">
+    <!-- Room Entry View -->
+    <div id="room-view">
+      <h1>Echo Tale</h1>
+      <div class="card" id="room-section">
+        <input 
+          type="text" 
+          id="roomInput" 
+          placeholder="enter a secret room code" 
+          autocomplete="off"
+        />
+        <button id="joinBtn">Begin</button>
+        <p class="room-description">share this code with someone special</p>
+      </div>
+    </div>
+
+    <!-- Writing View -->
+    <div id="writing-view" class="hidden">
+      <h1>Echo Tale</h1>
+      <div class="card" id="game-section">
+        <p id="prompt"></p>
+        <textarea 
+          id="myAnswer" 
+          placeholder="let your words flow freely..."
+          maxlength="500"
+        ></textarea>
+        <button id="submitBtn">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result Full Page View -->
+  <div id="result-page" class="hidden">
+    <div class="result-container">
+      <h2 class="result-title">Your Echo Tale</h2>
+      <div class="poem-card">
+        <div class="poem-text" id="poemText"></div>
+      </div>
+      <div class="action-buttons">
+        <button id="writeAnotherBtn">Create Another</button>
+        <button id="downloadTxtBtn">Save as Text</button>
+        <button id="downloadImgBtn">Save as Image</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
