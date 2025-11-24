@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -13,5 +14,13 @@
     "express": "^5.1.0",
     "http": "^0.0.1-security",
     "socket.io": "^4.8.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RachelH1213/lab25fall-fourth-project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/RachelH1213/lab25fall-fourth-project/issues"
+  },
+  "homepage": "https://github.com/RachelH1213/lab25fall-fourth-project#readme"
 }

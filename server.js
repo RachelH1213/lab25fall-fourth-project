@@ -4,7 +4,14 @@ const { Server } = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+
+// ✅ ADD CORS (required by teacher)
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 
 const storyTemplates = [
   {
@@ -21,10 +28,10 @@ const storyTemplates = [
       "Name a food or drink you like (Example: 'pickles' or 'strawberry milk' or 'cold pizza')",
     ]
   }
-
 ];
 
-app.use(express.static('public'));
+// ✅ CHANGE 'public' to 'docs' (required for GitHub Pages)
+app.use(express.static('docs'));
 
 const roomTemplates = new Map();
 
