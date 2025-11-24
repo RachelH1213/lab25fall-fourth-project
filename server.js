@@ -5,7 +5,6 @@ const { Server } = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 
-// ✅ ADD CORS (required by teacher)
 const io = new Server(server, {
   cors: {
     origin: "*",

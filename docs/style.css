@@ -1,4 +1,4 @@
-/* public/style.css */
+
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Grotesk:wght@300;400;500;600&display=swap');
 
@@ -68,7 +68,6 @@ body::after {
   }
 }
 
-/* Container for all views */
 .container {
   width: 100%;
   max-width: 900px;
@@ -76,7 +75,7 @@ body::after {
   z-index: 1;
 }
 
-/* Title */
+
 h1 {
   font-family: 'Cormorant Garamond', serif;
   font-size: 5rem;
@@ -109,7 +108,6 @@ h1::after {
   }
 }
 
-/* Card styling */
 .card {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(30px);
@@ -144,7 +142,6 @@ h1::after {
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent);
 }
 
-/* Room Section */
 #room-section {
   text-align: center;
 }
@@ -185,7 +182,6 @@ h1::after {
   font-style: italic;
 }
 
-/* Buttons */
 button {
   background: linear-gradient(135deg, #ff6b9d, #ff8fab);
   color: white;
@@ -236,7 +232,6 @@ button:disabled {
   transform: none !important;
 }
 
-/* Game Section */
 #game-section .card {
   text-align: center;
 }
@@ -297,7 +292,6 @@ textarea:focus {
   box-shadow: 0 10px 40px rgba(255, 107, 157, 0.15);
 }
 
-/* Result Page - Full Screen */
 #result-page {
   position: fixed;
   top: 0;
@@ -392,7 +386,6 @@ textarea:focus {
   font-weight: 300;
 }
 
-/* Typewriter cursor */
 .typing-cursor {
   display: inline-block;
   width: 3px;
@@ -409,7 +402,6 @@ textarea:focus {
   51%, 100% { opacity: 0; }
 }
 
-/* Action Buttons */
 .action-buttons {
   display: flex;
   gap: 1.5rem;
@@ -455,7 +447,6 @@ textarea:focus {
   display: none !important;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   h1 {
     font-size: 3rem;

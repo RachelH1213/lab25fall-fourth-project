@@ -1,6 +1,6 @@
-// public/script.js
+// ✅ FIXED: Remove trailing slash
+const socket = io("https://lab25fall-fourth-project.onrender.com");
 
-const socket = io("https://lab25fall-fourth-project.onrender.com/");
 let roomCode = "";
 let isInitiator = false;
 let peerConnection;
@@ -17,7 +17,6 @@ const config = {
   iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
 };
 
-// DOM elements
 const roomView = document.getElementById("room-view");
 const writingView = document.getElementById("writing-view");
 const resultPage = document.getElementById("result-page");
@@ -28,17 +27,30 @@ const promptEl = document.getElementById("prompt");
 const myAnswer = document.getElementById("myAnswer");
 const submitBtn = document.getElementById("submitBtn");
 
-// Socket listeners
+// ✅ ADD: Connection status listeners
+socket.on('connect', () => {
+  console.log('✅ Connected to server:', socket.id);
+});
+
+socket.on('connect_error', (error) => {
+  console.error('❌ Connection error:', error);
+  alert('Cannot connect to server. Please check your internet connection.');
+});
+
+socket.on('disconnect', () => {
+  console.log('🔌 Disconnected from server');
+});
+
 socket.on("receive-template", (template) => {
   storyTemplate = template;
-  console.log("Template received:", template);
+  console.log("📜 Template received:", template);
 });
 
 socket.on("receive-prompt", (data) => {
-  console.log("Prompt data received:", data);
+  console.log("📝 Prompt data received:", data);
   
   if (!data || !data.prompt) {
-    console.error("Invalid prompt data:", data);
+    console.error("❌ Invalid prompt data:", data);
     return;
   }
   
@@ -47,11 +59,11 @@ socket.on("receive-prompt", (data) => {
   partnerPosition = myPosition === 1 ? 2 : 1;
   
   promptEl.innerHTML = "<strong>Your Prompt</strong>" + currentPrompt;
-  console.log("Prompt displayed. Position:", myPosition);
+  console.log("✅ Prompt displayed. Position:", myPosition);
 });
 
 socket.on("initiate-webrtc", async (initiator) => {
-  console.log("WebRTC initiating. Initiator:", initiator);
+  console.log("🔗 WebRTC initiating. Initiator:", initiator);
   isInitiator = initiator;
   peerConnection = new RTCPeerConnection(config);
 
@@ -61,10 +73,10 @@ socket.on("initiate-webrtc", async (initiator) => {
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(offer);
     socket.emit("webrtc-offer", { room: roomCode, offer });
-    console.log("Offer sent");
+    console.log("📤 Offer sent");
   } else {
     peerConnection.ondatachannel = (event) => {
-      console.log("DataChannel received");
+      console.log("📥 DataChannel received");
       dataChannel = event.channel;
       setupDataChannel();
     };
@@ -78,16 +90,16 @@ socket.on("initiate-webrtc", async (initiator) => {
 });
 
 socket.on("webrtc-offer", async ({ offer }) => {
-  console.log("Offer received");
+  console.log("📩 Offer received");
   await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
   const answer = await peerConnection.createAnswer();
   await peerConnection.setLocalDescription(answer);
   socket.emit("webrtc-answer", { room: roomCode, answer });
-  console.log("Answer sent");
+  console.log("📤 Answer sent");
 });
 
 socket.on("webrtc-answer", async ({ answer }) => {
-  console.log("Answer received");
+  console.log("📩 Answer received");
   await peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
 });
 
@@ -96,12 +108,11 @@ socket.on("webrtc-candidate", async ({ candidate }) => {
     try {
       await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
     } catch (e) {
-      console.error('ICE candidate error', e);
+      console.error('❌ ICE candidate error', e);
     }
   }
 });
 
-// User joins room
 joinBtn.onclick = () => {
   roomCode = roomInput.value.trim();
   if (!roomCode) {
@@ -109,16 +120,14 @@ joinBtn.onclick = () => {
     return;
   }
   
-  console.log("Joining room:", roomCode);
+  console.log("🚪 Joining room:", roomCode);
   socket.emit("join-room", roomCode);
   
-  // Switch to writing view
   roomView.classList.add("hidden");
   writingView.classList.remove("hidden");
-  promptEl.textContent = "Waiting for your partner...";
+  promptEl.textContent = "Waiting for your partner to join...";
 };
 
-// User submits text
 submitBtn.onclick = () => {
   myText = myAnswer.value.trim();
   if (!myText) {
@@ -128,12 +137,12 @@ submitBtn.onclick = () => {
   
   if (!isDataChannelReady) {
     alert("Connection not ready. Please wait a moment and try again.");
-    console.log("DataChannel not ready. State:", dataChannel?.readyState);
+    console.log("❌ DataChannel not ready. State:", dataChannel?.readyState);
     return;
   }
   
-  console.log("My text:", myText);
-  console.log("My position:", myPosition);
+  console.log("✍️ My text:", myText);
+  console.log("📍 My position:", myPosition);
   
   try {
     const message = JSON.stringify({ 
@@ -142,107 +151,103 @@ submitBtn.onclick = () => {
       position: myPosition 
     });
     
-    console.log("Sending message:", message);
+    console.log("📤 Sending message:", message);
     dataChannel.send(message);
     
     myAnswer.disabled = true;
     submitBtn.disabled = true;
     submitBtn.textContent = "Waiting for partner...";
     
-    console.log("Message sent successfully");
+    console.log("✅ Message sent successfully");
     showResult();
   } catch (error) {
-    console.error("Send error:", error);
+    console.error("❌ Send error:", error);
     alert("Failed to send message. Please try again.");
   }
 };
 
 function setupDataChannel() {
-  console.log("Setting up DataChannel");
+  console.log("⚙️ Setting up DataChannel");
   
   dataChannel.onopen = () => {
-    console.log("DataChannel OPEN");
+    console.log("✅ DataChannel OPEN");
     isDataChannelReady = true;
   };
   
   dataChannel.onclose = () => {
-    console.log("DataChannel CLOSED");
+    console.log("❌ DataChannel CLOSED");
     isDataChannelReady = false;
   };
   
   dataChannel.onerror = (error) => {
-    console.error("DataChannel error:", error);
+    console.error("💥 DataChannel error:", error);
   };
   
   dataChannel.onmessage = (event) => {
-    console.log("Message received:", event.data);
+    console.log("📨 Message received:", event.data);
     
     try {
       const message = JSON.parse(event.data);
-      console.log("Parsed message:", message);
+      console.log("📦 Parsed message:", message);
       
       if (message.type === 'text') {
         partnerText = message.content;
-        console.log("Partner text saved:", partnerText);
-        console.log("State - myText:", !!myText, "partnerText:", !!partnerText);
+        console.log("✍️ Partner text saved:", partnerText);
+        console.log("🔍 State - myText:", !!myText, "partnerText:", !!partnerText);
         showResult();
       } else if (message.type === 'reset') {
-        console.log("Reset signal received");
+        console.log("🔄 Reset signal received");
         handleRemoteReset();
       }
     } catch (error) {
-      console.error("Parse error:", error);
+      console.error("❌ Parse error:", error);
     }
   };
   
-  console.log("DataChannel setup complete");
+  console.log("✅ DataChannel setup complete");
 }
 
 function showResult() {
-  console.log("=== showResult called ===");
-  console.log("myText:", myText ? myText : "EMPTY");
-  console.log("partnerText:", partnerText ? partnerText : "EMPTY");
-  console.log("myPosition:", myPosition);
-  console.log("storyTemplate:", storyTemplate ? storyTemplate.substring(0, 50) : "EMPTY");
+  console.log("🎬 === showResult called ===");
+  console.log("   myText:", myText ? `"${myText}"` : "EMPTY");
+  console.log("   partnerText:", partnerText ? `"${partnerText}"` : "EMPTY");
+  console.log("   myPosition:", myPosition);
+  console.log("   storyTemplate:", storyTemplate ? storyTemplate.substring(0, 50) + "..." : "EMPTY");
   
   if (!myText || !partnerText) {
-    console.log("Waiting for both texts");
+    console.log("⏳ Waiting for both texts");
     return;
   }
   
   if (!storyTemplate) {
-    console.log("No template available");
+    console.log("❌ No template available");
     return;
   }
   
-  console.log("Generating story");
+  console.log("✅ Generating story");
   
-  // Generate final story
   let finalStory = storyTemplate;
   if (myPosition === 1) {
     finalStory = finalStory.replace('{answer1}', myText).replace('{answer2}', partnerText);
-    console.log("Position 1");
+    console.log("📝 Position 1");
   } else {
     finalStory = finalStory.replace('{answer1}', partnerText).replace('{answer2}', myText);
-    console.log("Position 2");
+    console.log("📝 Position 2");
   }
   
-  console.log("Final story:", finalStory);
+  console.log("📖 Final story:", finalStory);
   
-  // Hide writing view, show result page
   writingView.classList.add("hidden");
   resultPage.classList.remove("hidden");
   
-  // Display with typewriter effect
   const poemText = document.getElementById('poemText');
   typewriterEffect(poemText, finalStory);
   
-  // Bind button events
   document.getElementById('writeAnotherBtn').onclick = writeAnother;
   document.getElementById('downloadTxtBtn').onclick = () => downloadAsText(finalStory);
   document.getElementById('downloadImgBtn').onclick = downloadAsImage;
   
-  console.log("Story displayed");
+  console.log("✅ Story displayed");
 }
 
 function typewriterEffect(element, text, speed = 50) {
@@ -275,18 +280,18 @@ function writeAnother() {
     return;
   }
   
-  console.log("Initiating reset");
+  console.log("🔄 Initiating reset");
   dataChannel.send(JSON.stringify({ type: 'reset' }));
   resetForNewRound();
 }
 
 function handleRemoteReset() {
-  console.log("Handling remote reset");
+  console.log("🔄 Handling remote reset");
   resetForNewRound();
 }
 
 function resetForNewRound() {
-  console.log("Resetting for new round");
+  console.log("🔄 Resetting for new round");
   
   myText = "";
   partnerText = "";
@@ -298,12 +303,11 @@ function resetForNewRound() {
   
   promptEl.textContent = "Loading new prompt...";
   
-  // Hide result page, show writing view
   resultPage.classList.add("hidden");
   writingView.classList.remove("hidden");
   
   socket.emit("request-new-prompts", roomCode);
-  console.log("Reset complete");
+  console.log("✅ Reset complete");
 }
 
 function downloadAsText(storyText) {
@@ -317,6 +321,7 @@ function downloadAsText(storyText) {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+  console.log("💾 Downloaded as text");
 }
 
 function downloadAsImage() {
@@ -350,6 +355,7 @@ function captureAndDownload() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      console.log("💾 Downloaded as image");
     });
   });
 }
