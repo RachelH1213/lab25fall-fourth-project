@@ -1,6 +1,6 @@
 // public/script.js
 
-const socket = io();
+const socket = io("https://lab25fall-fourth-project.onrender.com/");
 let roomCode = "";
 let isInitiator = false;
 let peerConnection;
